@@ -4,30 +4,32 @@ class Colors
 end
 
 class Cell
-  SIZE = 10
+  SIZE = 5
   START_X = 30
   START_Y = 30
 
-  def initialize(app, x, y)
+  def initialize(app, row, col)
     @app = app
-    @x = x
-    @y = y
+    @row = row
+    @col = col
+    
+    spacing = SIZE + 1
+    @x = START_X + (spacing * row)
+    @y = START_Y + (spacing * col)
   end
   
-  def paint(snake)
+  def paint
   
+=begin
     if snake.segments.include?([@x, @y])
       color = Colors::SNAKE_RED
     else
-      color = Colors::GROUND
     end
-    
-    spacing = SIZE + 1
-    x = START_X + (spacing * @x)
-    y = START_Y + (spacing * @y)
+=end
+      color = Colors::GROUND
     
     @app.fill color
-    @app.rect x, y, SIZE, SIZE
+   # @app.rect @x, @y, SIZE, SIZE
   end
 end
 
@@ -37,11 +39,32 @@ class Snake
   def initialize
     @segments = [Field.rand]
   end
+  
+  def up
+    @segments[0] = [head[0], head[1] - 1]
+  end
+  
+  def down
+    @segments[0] = [head[0], head[1] + 1]
+  end
+  
+  def left
+    @segments[0] = [head[0] - 1, head[1]]
+  end
+
+  def right
+    @segments[0] = [head[0] + 1, head[1]]
+  end
+  
+  def head
+    @segments[0]
+  end
 
 end
 
 class Field
-  SIDE = 40
+  attr_reader :snake
+  SIDE = 10
   
   def initialize(app)
     @app = app
@@ -56,9 +79,7 @@ class Field
   end
 
   def paint
-    @cells.each do |c|
-      c.paint(@snake)
-    end
+    @cells.each(&:paint)
   end
   
   class << self
@@ -71,12 +92,27 @@ class Field
 end
 
 
-Shoes.app :height => 500, :width => 500, :title => "Snakes" do
+Shoes.app :height => 250, :width => 250, :title => "Snakes" do
   background "#08ab2e".."#1c582a"
   
   @field = Field.new(self)
+  #animate(1) { @field.paint }
+  animate(10) { 
+  @status.replace "Time: #{Time.now.strftime('%T')}" 
   @field.paint
-  #animate(1) { @status.replace "Time: #{Time.now.strftime('%T')}" }
+  }
+  keypress do |k|
+    case k
+      when :up
+        @field.snake.up
+      when :down
+        @field.snake.down
+      when :left
+        @field.snake.left
+      when :right
+        @field.snake.right
+    end
+  end
   
 =begin 
   flow :margin => 1 do
