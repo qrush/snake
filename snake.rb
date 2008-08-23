@@ -1,6 +1,6 @@
 class Logger
   def self.debug(msg)
-    #p msg
+    p msg
   end
 end
 
@@ -11,8 +11,6 @@ class Colors
 end
 
 class Cell
-  attr_accessor :paint, :color
-
   SIZE = 15
   START_X = 50
   START_Y = 50
@@ -22,67 +20,66 @@ class Cell
     @row = row
     @col = col
     @paint = true
-    @color = Colors::GROUND
     
     spacing = SIZE + 1
     @x = START_X + (spacing * row)
     @y = START_Y + (spacing * col)
   end
   
-  def paint
-    if @paint
-      #if snake.segments.include?([@row, @col])
-      #  color = Colors::SNAKE_RED
-      #else
-      #  color = Colors::GROUND
-      #end
-      Logger.debug "Painting cell [#{@row}, #{@col}]"
-      
-      @app.fill @color
-      @app.rect @x, @y, SIZE, SIZE
-      @paint = false
-    end
+  def paint(color = Colors::GROUND)
+    #if snake.segments.include?([@row, @col])
+    #  color = Colors::SNAKE_RED
+    #else
+    #  color = Colors::GROUND
+    #end
+    Logger.debug "Painting cell [#{@row}, #{@col}]"
+    
+    @app.fill color
+    @app.rect @x, @y, SIZE, SIZE
   end
 end
 
 class Snake  
-  attr_reader :segments
+  attr_reader :segments, :direction
+  
+  DIRECTIONS = {
+    :up => [0, -1],
+    :down => [0, 1],
+    :left => [-1, 0],
+    :right => [1, 0]
+  }
   
   def initialize(field)
+    Logger.debug "New snake!"
     @field = field
     @segments = [Field.rand]
-  end
-  
-  def up
-    @segments[0] = [head[0], head[1] - 1]
-  end
-  
-  def down
-    @segments[0] = [head[0], head[1] + 1]
-  end
-  
-  def left
-    @segments[0] = [head[0] - 1, head[1]]
-  end
-
-  def right
-    @segments[0] = [head[0] + 1, head[1]]
+    @direction = :right
   end
   
   def head
     @segments[0]
   end
   
-  def move
-    Logger.debug "Painting snake..."
-    
+  def turn(key)
+    case key
+      when :up, :down, :left, :right
+      @direction = key
+    end
   
-    @field.cells[0].paint = true
-    @field.cells[0].color = Colors::SNAKE_RED
-    @field.cells[0].paint()
-    
+    #@direction = key if DIRECTIONS.keys.include?(key)
   end
+  
+  def move
+    dir = DIRECTIONS[@direction]
+  #  Logger.debug @direction
+    @segments[0] = [head[0] + dir[0], head[1] + dir[1]]
+    
+    
+    @segments.each do |seg|
+      @field.cells[Field::SIDE * seg[0] + seg[1]].paint(Colors::SNAKE_RED)
+    end
 
+  end
 end
 
 class Field
@@ -120,24 +117,18 @@ Shoes.app :height => 500, :width => 500, :title => "Snakes" do
   
   Logger.debug "Making field..."
   @field = Field.new(self)
+  @field.paint
+  
   @snake = Snake.new(@field)
   #animate(1) { @field.paint }
-  animate(10) { 
+  animate(1) { 
   @status.replace "Time: #{Time.now.strftime('%T')}" 
-  @field.paint
-  @snake.move
   }
+  
+  animate(20) { @snake.move }
+  
   keypress do |k|
-    case k
-      when :up
-        @snake.up
-      when :down
-        @snake.down
-      when :left
-        @snake.left
-      when :right
-        @snake.right
-    end
+    @snake.turn(k)
   end
   
 =begin 
