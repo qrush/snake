@@ -11,7 +11,7 @@ class Colors
 end
 
 class Cell
-  SIZE = 7
+  SIZE = 25
   START_X = 50
   START_Y = 50
   
@@ -26,10 +26,8 @@ class Cell
   end
   
   def paint(color = Colors::GROUND)
-    #Logger.debug "Painting cell [#{@row}, #{@col}]"
-    
     @app.fill color
-    @app.rect @x, @y, SIZE, SIZE
+    @app.rect :left => @x, :top => @y, :width => SIZE, :height => SIZE
   end
 end
 
@@ -73,7 +71,7 @@ end
 
 class Field
   attr_reader :cells
-  SIDE = 25
+  SIDE = 15
   
   def initialize(app)
     @app = app
@@ -94,7 +92,6 @@ class Field
   class << self
     def rand
       p = Proc.new { (Kernel.rand * 100 % SIDE - 1).to_i }
-      
       [p.call, p.call]
     end
   end
@@ -110,11 +107,11 @@ Shoes.app :height => 500, :width => 500, :title => "Snakes" do
   
   @snake = Snake.new(@field)
   #animate(1) { @field.paint }
-  animate(1) { 
+  animate(1) do
   @status.replace "Time: #{Time.now.strftime('%T')}" 
-  }
+  end
   
-  animate(30) do |a| 
+  animate(10) do |a| 
       
     @snake.move
   end
