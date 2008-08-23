@@ -1,3 +1,7 @@
+class Colors
+  GROUND = "#46350A"
+  SNAKE_RED = "#B02222"
+end
 
 class Cell
   SIZE = 10
@@ -10,9 +14,15 @@ class Cell
     @y = y
   end
   
-  def paint(color = "#46350A", stroke = true)
+  def paint(snake)
+  
+    if snake.segments.include?([@x, @y])
+      color = Colors::SNAKE_RED
+    else
+      color = Colors::GROUND
+    end
+    
     spacing = SIZE + 1
-   
     x = START_X + (spacing * @x)
     y = START_Y + (spacing * @y)
     
@@ -22,10 +32,9 @@ class Cell
 end
 
 class Snake  
-  attr_reader :segments, :length
+  attr_reader :segments
   
   def initialize
-    @length = 1
     @segments = [Field.rand]
   end
 
@@ -47,8 +56,11 @@ class Field
   end
 
   def paint
-    @cells.each { |c| c.paint }
+    @cells.each do |c|
+      c.paint(@snake)
+    end
   end
+  
   class << self
     def rand
       p = Proc.new { (Kernel.rand * 100 % SIDE - 1).to_i }
