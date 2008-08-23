@@ -1,17 +1,28 @@
+class Logger
+  def self.debug(msg)
+    #p msg
+  end
+end
+
 class Colors
   GROUND = "#46350A"
   SNAKE_RED = "#B02222"
+  TEST = "#00f"
 end
 
 class Cell
-  SIZE = 5
-  START_X = 30
-  START_Y = 30
+  attr_accessor :paint, :color
 
+  SIZE = 15
+  START_X = 50
+  START_Y = 50
+  
   def initialize(app, row, col)
     @app = app
     @row = row
     @col = col
+    @paint = true
+    @color = Colors::GROUND
     
     spacing = SIZE + 1
     @x = START_X + (spacing * row)
@@ -19,24 +30,26 @@ class Cell
   end
   
   def paint
-  
-=begin
-    if snake.segments.include?([@x, @y])
-      color = Colors::SNAKE_RED
-    else
+    if @paint
+      #if snake.segments.include?([@row, @col])
+      #  color = Colors::SNAKE_RED
+      #else
+      #  color = Colors::GROUND
+      #end
+      Logger.debug "Painting cell [#{@row}, #{@col}]"
+      
+      @app.fill @color
+      @app.rect @x, @y, SIZE, SIZE
+      @paint = false
     end
-=end
-      color = Colors::GROUND
-    
-    @app.fill color
-   # @app.rect @x, @y, SIZE, SIZE
   end
 end
 
 class Snake  
   attr_reader :segments
   
-  def initialize
+  def initialize(field)
+    @field = field
     @segments = [Field.rand]
   end
   
@@ -59,17 +72,26 @@ class Snake
   def head
     @segments[0]
   end
+  
+  def move
+    Logger.debug "Painting snake..."
+    
+  
+    @field.cells[0].paint = true
+    @field.cells[0].color = Colors::SNAKE_RED
+    @field.cells[0].paint()
+    
+  end
 
 end
 
 class Field
-  attr_reader :snake
-  SIDE = 10
+  attr_reader :cells
+  SIDE = 25
   
   def initialize(app)
     @app = app
     @cells = []
-    @snake = Snake.new
     
     SIDE.times do |x|
       SIDE.times do |y|
@@ -79,6 +101,7 @@ class Field
   end
 
   def paint
+    Logger.debug "Painting field..."
     @cells.each(&:paint)
   end
   
@@ -92,25 +115,28 @@ class Field
 end
 
 
-Shoes.app :height => 250, :width => 250, :title => "Snakes" do
+Shoes.app :height => 500, :width => 500, :title => "Snakes" do
   background "#08ab2e".."#1c582a"
   
+  Logger.debug "Making field..."
   @field = Field.new(self)
+  @snake = Snake.new(@field)
   #animate(1) { @field.paint }
   animate(10) { 
   @status.replace "Time: #{Time.now.strftime('%T')}" 
   @field.paint
+  @snake.move
   }
   keypress do |k|
     case k
       when :up
-        @field.snake.up
+        @snake.up
       when :down
-        @field.snake.down
+        @snake.down
       when :left
-        @field.snake.left
+        @snake.left
       when :right
-        @field.snake.right
+        @snake.right
     end
   end
   
