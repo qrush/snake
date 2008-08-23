@@ -11,7 +11,6 @@ class Cell
   end
   
   def paint(color = "#46350A", stroke = true)
-
     spacing = SIZE + 1
    
     x = START_X + (spacing * @x)
@@ -22,11 +21,12 @@ class Cell
   end
 end
 
-class Snake
+class Snake  
+  attr_reader :segments, :length
   
-  def initialize(app)
+  def initialize
     @length = 1
-    @segments = [Cell.new(app, 0, 0)]
+    @segments = [Field.rand]
   end
 
 end
@@ -37,7 +37,7 @@ class Field
   def initialize(app)
     @app = app
     @cells = []
-    @snake = Snake.new(app)
+    @snake = Snake.new
     
     SIDE.times do |x|
       SIDE.times do |y|
@@ -49,7 +49,13 @@ class Field
   def paint
     @cells.each { |c| c.paint }
   end
-
+  class << self
+    def rand
+      p = Proc.new { (Kernel.rand * 100 % SIDE - 1).to_i }
+      
+      [p.call, p.call]
+    end
+  end
 end
 
 
