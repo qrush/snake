@@ -1,9 +1,9 @@
 
 class Field 
-  CELL_SIZE = 15
-  START_X = 35
-  START_Y = 100
-  SIDE = 25
+  CELL_SIZE = 10
+  START_X = 30
+  START_Y = 30
+  SIDE = 40
   
   def initialize(app)
     @app = app
@@ -20,8 +20,6 @@ class Field
   end
 
   def render_cell(x, y, color = "#46350A", stroke = true)
-    
-    @app.stroke "#fff"
     @app.fill color
     @app.rect x, y, CELL_SIZE, CELL_SIZE
     #cell_size = 10
@@ -35,10 +33,14 @@ class Field
 
   def paint
     
-    SIDE.times do |i|
-      render_cell(START_X + ((CELL_SIZE+2) * i), START_Y)
-    end
+    spacing = CELL_SIZE + 1
     
+    SIDE.times do |x|
+      SIDE.times do |y|
+        render_cell(START_X + (spacing * x), START_Y + (spacing * y))
+      end
+    end
+
   end
 
 end
@@ -49,16 +51,14 @@ Shoes.app :height => 500, :width => 500, :title => "Snakes" do
   
   @field = Field.new(self)
   @field.paint
-  animate(1) { @status.replace "Time: #{Time.now.strftime('%T')}" }
+=begin 
+  #animate(1) { @status.replace "Time: #{Time.now.strftime('%T')}" }
   
-  flow :margin => 4 do
+  flow :margin => 1 do
     button("Beginner") { new_game :beginner }
     button("Intermediate") {new_game :intermediate }
     button("Expert") { new_game :expert }
   end
-  
-  stack do @status = para :stroke => white end
-  
-  para "Left click - open cell, right click - put flag, middle click - reveal empty cells", :top => 420, :left => 0, :stroke => white,  :font => "11px"
-end
+=end 
+  stack do @status = para :stroke => white end  end
 
