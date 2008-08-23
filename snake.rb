@@ -1,6 +1,6 @@
 class Logger
   def self.debug(msg)
-    p msg
+#    p msg
   end
 end
 
@@ -11,7 +11,7 @@ class Colors
 end
 
 class Cell
-  SIZE = 15
+  SIZE = 7
   START_X = 50
   START_Y = 50
   
@@ -19,7 +19,6 @@ class Cell
     @app = app
     @row = row
     @col = col
-    @paint = true
     
     spacing = SIZE + 1
     @x = START_X + (spacing * row)
@@ -27,12 +26,7 @@ class Cell
   end
   
   def paint(color = Colors::GROUND)
-    #if snake.segments.include?([@row, @col])
-    #  color = Colors::SNAKE_RED
-    #else
-    #  color = Colors::GROUND
-    #end
-    Logger.debug "Painting cell [#{@row}, #{@col}]"
+    #Logger.debug "Painting cell [#{@row}, #{@col}]"
     
     @app.fill color
     @app.rect @x, @y, SIZE, SIZE
@@ -61,17 +55,12 @@ class Snake
   end
   
   def turn(key)
-    case key
-      when :up, :down, :left, :right
-      @direction = key
-    end
-  
-    #@direction = key if DIRECTIONS.keys.include?(key)
+    @direction = key if DIRECTIONS.keys.include?(key)
   end
   
   def move
     dir = DIRECTIONS[@direction]
-  #  Logger.debug @direction
+    Logger.debug @direction
     @segments[0] = [head[0] + dir[0], head[1] + dir[1]]
     
     
@@ -125,7 +114,10 @@ Shoes.app :height => 500, :width => 500, :title => "Snakes" do
   @status.replace "Time: #{Time.now.strftime('%T')}" 
   }
   
-  animate(20) { @snake.move }
+  animate(30) do |a| 
+      
+    @snake.move
+  end
   
   keypress do |k|
     @snake.turn(k)
