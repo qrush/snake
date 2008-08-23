@@ -1,6 +1,11 @@
+SPEED = 10
+  SIZE = 10
+  START_X = 50
+  START_Y = 50
+
 class Logger
   def self.debug(msg)
-#    p msg
+    p msg
   end
 end
 
@@ -11,9 +16,6 @@ class Colors
 end
 
 class Cell
-  SIZE = 25
-  START_X = 50
-  START_Y = 50
   
   def initialize(app, row, col)
     @app = app
@@ -32,7 +34,7 @@ class Cell
 end
 
 class Snake  
-  attr_reader :segments, :direction
+  attr_reader :tail
   
   DIRECTIONS = {
     :up => [0, -1],
@@ -56,22 +58,27 @@ class Snake
     @direction = key if DIRECTIONS.keys.include?(key)
   end
   
-  def move
-    dir = DIRECTIONS[@direction]
-    Logger.debug @direction
-    @segments[0] = [head[0] + dir[0], head[1] + dir[1]]
-    
+  def paint
     
     @segments.each do |seg|
       @field.cells[Field::SIDE * seg[0] + seg[1]].paint(Colors::SNAKE_RED)
     end
-
+    
+    @field.cells[Field::SIDE * @tail[0] + @tail[1]].paint
+  end
+  
+  def move
+    dir = DIRECTIONS[@direction]
+    
+    @tail = @segments.last.dup
+    
+    @segments[0] = [head[0] + dir[0], head[1] + dir[1]]
   end
 end
 
 class Field
   attr_reader :cells
-  SIDE = 15
+  SIDE = 10
   
   def initialize(app)
     @app = app
@@ -111,10 +118,11 @@ Shoes.app :height => 500, :width => 500, :title => "Snakes" do
   @status.replace "Time: #{Time.now.strftime('%T')}" 
   end
   
-  animate(10) do |a| 
-      
-    @snake.move
-  end
+  animate(SPEED) { 
+  
+  @snake.move 
+   @snake.paint 
+  }
   
   keypress do |k|
     @snake.turn(k)
