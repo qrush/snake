@@ -1,6 +1,6 @@
 SPEED = 10
-FIELD_SIZE = 15
-CELL_SIZE = 10
+FIELD_SIZE = 25
+CELL_SIZE = 15
 START_X = 50
 START_Y = 50
 
@@ -114,21 +114,10 @@ class Field
   end
 
   def reset
-    Logger.debug "Reset!"
-
     side = CELL_SIZE * FIELD_SIZE
+    @app.fill Colors::GROUND
     @app.strokewidth 0
-    @app.rect(START_X, START_Y, side, side) 
-=begin
-    @cells.each do |c|
-      c.paint if c.color != Colors::GROUND
-    end
-=end
-  end
-  
-  def paint
-    Logger.debug "Painting field..."
-    @cells.each(&:paint)
+    @app.rect(START_X, START_Y, side, side)
   end
   
   class << self
@@ -144,13 +133,13 @@ Shoes.app :height => 500, :width => 500, :title => "Snakes" do
   background "#08ab2e".."#1c582a"
   
   def new_game
+    @field.reset
     @snake.reset
   end
   
   @field = Field.new(self)
   @snake = Snake.new(@field)
   
-  @field.paint
   new_game
   
   animate(SPEED) do
@@ -164,13 +153,15 @@ Shoes.app :height => 500, :width => 500, :title => "Snakes" do
   end
   
   keypress do |k|
-    @snake.turn(k)
-    
+    @snake.turn(k)    
     new_game if k == :control_n
   end
-  
+=begin 
   flow :margin => 4 do
     button("New Game") { new_game }
   end
-  stack do @status = para :stroke => white end  end
+=end  
+  stack do @status = para :stroke => white end 
+
+ end
 
