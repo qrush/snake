@@ -13,15 +13,13 @@ end
 class Colors
   GROUND = "#46350A"
   SNAKE_RED = "#B02222"
-  TEST = "#00f"
 end
 
 class Cell
+  attr_reader :color
   
   def initialize(app, row, col)
     @app = app
-    @row = row
-    @col = col
     
     spacing = CELL_SIZE + 1
     @x = START_X + (spacing * row)
@@ -29,6 +27,7 @@ class Cell
   end
   
   def paint(color = Colors::GROUND)
+    @color = color
     @app.fill color
     @app.rect :left => @x, :top => @y, :width => CELL_SIZE, :height => CELL_SIZE
   end
@@ -45,13 +44,14 @@ class Snake
   }
   
   def initialize(field)
-    Logger.debug "New snake!"
     @field = field
-    @moving = true
+  end
+  
+  def reset
+    @moving = true   
     @segments = [Field.rand]
     
     center = [FIELD_SIZE / 2, FIELD_SIZE / 2]
-    
         
     # moving the snake to the center from its random spot
     if center[0] - head[0] == 0
@@ -67,7 +67,6 @@ class Snake
         @direction = :right
       end
     end
-    
   end
   
   def head
@@ -84,7 +83,6 @@ class Snake
     end
     
     @field.cells[FIELD_SIZE * @tail[0] + @tail[1]].paint
-
   end
   
   def move
@@ -115,6 +113,13 @@ class Field
     end
   end
 
+  def reset
+    Logger.debug "Reset!"
+    @cells.each do |c|
+      c.paint if( c.color != Colors::GROUND )
+    end
+  end
+  
   def paint
     Logger.debug "Painting field..."
     @cells.each(&:paint)
@@ -132,14 +137,18 @@ end
 Shoes.app :height => 500, :width => 500, :title => "Snakes" do
   background "#08ab2e".."#1c582a"
   
-  Logger.debug "Making field..."
-  @field = Field.new(self)
-  @field.paint
+  def new_game(startup = false)
+#    @field.reset if !startup
+    @snake.reset
+  end
   
+  @field = Field.new(self)
   @snake = Snake.new(@field)
   
-  animate(SPEED) { 
-
+  @field.paint
+  new_game(true)
+  
+  animate(SPEED) do
     if @snake.moving
       @snake.move 
       @snake.paint 
@@ -147,18 +156,16 @@ Shoes.app :height => 500, :width => 500, :title => "Snakes" do
     else
       @status.replace "Fail!"
     end
-  }
+  end
   
   keypress do |k|
     @snake.turn(k)
+    
+    new_game if k == :control_n
   end
   
-=begin 
-  flow :margin => 1 do
-    button("Beginner") { new_game :beginner }
-    button("Intermediate") {new_game :intermediate }
-    button("Expert") { new_game :expert }
+  flow :margin => 4 do
+    button("New Game") { new_game }
   end
-=end 
   stack do @status = para :stroke => white end  end
 
