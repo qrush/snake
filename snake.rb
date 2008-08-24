@@ -47,9 +47,27 @@ class Snake
   def initialize(field)
     Logger.debug "New snake!"
     @field = field
-    @segments = [[5, 5]]
-    @direction = :up
     @moving = true
+    @segments = [Field.rand]
+    
+    center = [FIELD_SIZE / 2, FIELD_SIZE / 2]
+    
+        
+    # moving the snake to the center from its random spot
+    if center[0] - head[0] == 0
+      @direction = center[1] > head[1] ? :down : :up
+    else
+      slope = (center[1] - head[1]) / (center[0] - head[0])
+      
+      if slope.zero?
+        @direction = center[0] > head[0] ? :right : :left
+      elsif slope > 0
+        @direction = :left
+      else
+        @direction = :right
+      end
+    end
+    
   end
   
   def head
@@ -71,9 +89,7 @@ class Snake
   
   def move
     dir = DIRECTIONS[@direction]
-    
-    row = head[0] + dir[0]
-    col = head[1] + dir[1]
+    row, col = head[0] + dir[0], head[1] + dir[1]
     
     inside = Proc.new { |x| x.between?(0, FIELD_SIZE - 1) }
     @moving = inside.call(row) && inside.call(col)
