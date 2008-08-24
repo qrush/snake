@@ -21,9 +21,8 @@ class Cell
   def initialize(app, row, col)
     @app = app
     
-    spacing = CELL_SIZE + 1
-    @x = START_X + (spacing * row)
-    @y = START_Y + (spacing * col)
+    @x = START_X + (CELL_SIZE * row)
+    @y = START_Y + (CELL_SIZE * col)
   end
   
   def paint(color = Colors::GROUND)
