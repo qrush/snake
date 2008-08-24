@@ -1,6 +1,6 @@
 SPEED = 10
 FIELD_SIZE = 15
-CELL_SIZE = 20
+CELL_SIZE = 10
 START_X = 50
 START_Y = 50
 
@@ -20,7 +20,6 @@ class Cell
   
   def initialize(app, row, col)
     @app = app
-    
     @x = START_X + (CELL_SIZE * row)
     @y = START_Y + (CELL_SIZE * col)
   end
@@ -28,6 +27,8 @@ class Cell
   def paint(color = Colors::GROUND)
     @color = color
     @app.fill color
+    @app.strokewidth 0
+    #@app.oval(@x, @y, 20, 20)
     @app.rect :left => @x, :top => @y, :width => CELL_SIZE, :height => CELL_SIZE
   end
 end
@@ -114,9 +115,15 @@ class Field
 
   def reset
     Logger.debug "Reset!"
+
+    side = CELL_SIZE * FIELD_SIZE
+    @app.strokewidth 0
+    @app.rect(START_X, START_Y, side, side) 
+=begin
     @cells.each do |c|
       c.paint if c.color != Colors::GROUND
     end
+=end
   end
   
   def paint
@@ -136,8 +143,7 @@ end
 Shoes.app :height => 500, :width => 500, :title => "Snakes" do
   background "#08ab2e".."#1c582a"
   
-  def new_game(startup = false)
-    @field.reset if !startup
+  def new_game
     @snake.reset
   end
   
@@ -145,7 +151,7 @@ Shoes.app :height => 500, :width => 500, :title => "Snakes" do
   @snake = Snake.new(@field)
   
   @field.paint
-  new_game(true)
+  new_game
   
   animate(SPEED) do
     if @snake.moving
