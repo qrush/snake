@@ -116,7 +116,7 @@ class Field
   def reset
     Logger.debug "Reset!"
     @cells.each do |c|
-      c.paint if( c.color != Colors::GROUND )
+      c.paint if c.color != Colors::GROUND
     end
   end
   
@@ -138,7 +138,7 @@ Shoes.app :height => 500, :width => 500, :title => "Snakes" do
   background "#08ab2e".."#1c582a"
   
   def new_game(startup = false)
-#    @field.reset if !startup
+    @field.reset if !startup
     @snake.reset
   end
   
