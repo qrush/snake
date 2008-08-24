@@ -1,7 +1,8 @@
 SPEED = 10
-  SIZE = 10
-  START_X = 50
-  START_Y = 50
+FIELD_SIZE = 15
+CELL_SIZE = 20
+START_X = 50
+START_Y = 50
 
 class Logger
   def self.debug(msg)
@@ -22,19 +23,19 @@ class Cell
     @row = row
     @col = col
     
-    spacing = SIZE + 1
+    spacing = CELL_SIZE + 1
     @x = START_X + (spacing * row)
     @y = START_Y + (spacing * col)
   end
   
   def paint(color = Colors::GROUND)
     @app.fill color
-    @app.rect :left => @x, :top => @y, :width => SIZE, :height => SIZE
+    @app.rect :left => @x, :top => @y, :width => CELL_SIZE, :height => CELL_SIZE
   end
 end
 
 class Snake  
-  attr_reader :tail
+  attr_reader :moving
   
   DIRECTIONS = {
     :up => [0, -1],
@@ -46,8 +47,9 @@ class Snake
   def initialize(field)
     Logger.debug "New snake!"
     @field = field
-    @segments = [Field.rand]
-    @direction = :right
+    @segments = [[5, 5]]
+    @direction = :up
+    @moving = true
   end
   
   def head
@@ -59,33 +61,39 @@ class Snake
   end
   
   def paint
-    
     @segments.each do |seg|
-      @field.cells[Field::SIDE * seg[0] + seg[1]].paint(Colors::SNAKE_RED)
+      @field.cells[FIELD_SIZE * seg[0] + seg[1]].paint(Colors::SNAKE_RED)
     end
     
-    @field.cells[Field::SIDE * @tail[0] + @tail[1]].paint
+    @field.cells[FIELD_SIZE * @tail[0] + @tail[1]].paint
+
   end
   
   def move
     dir = DIRECTIONS[@direction]
     
-    @tail = @segments.last.dup
+    row = head[0] + dir[0]
+    col = head[1] + dir[1]
     
-    @segments[0] = [head[0] + dir[0], head[1] + dir[1]]
+    inside = Proc.new { |x| x.between?(0, FIELD_SIZE - 1) }
+    @moving = inside.call(row) && inside.call(col)
+    
+    if @moving
+      @tail = @segments.last.dup
+      @segments[0] = [row, col]
+    end
   end
 end
 
 class Field
   attr_reader :cells
-  SIDE = 10
   
   def initialize(app)
     @app = app
     @cells = []
     
-    SIDE.times do |x|
-      SIDE.times do |y|
+    FIELD_SIZE.times do |x|
+      FIELD_SIZE.times do |y|
         @cells << Cell.new(app, x, y)
       end
     end
@@ -98,7 +106,7 @@ class Field
   
   class << self
     def rand
-      p = Proc.new { (Kernel.rand * 100 % SIDE - 1).to_i }
+      p = Proc.new { (Kernel.rand * 100 % FIELD_SIZE - 1).to_i }
       [p.call, p.call]
     end
   end
@@ -113,15 +121,16 @@ Shoes.app :height => 500, :width => 500, :title => "Snakes" do
   @field.paint
   
   @snake = Snake.new(@field)
-  #animate(1) { @field.paint }
-  animate(1) do
-  @status.replace "Time: #{Time.now.strftime('%T')}" 
-  end
   
   animate(SPEED) { 
-  
-  @snake.move 
-   @snake.paint 
+
+    if @snake.moving
+      @snake.move 
+      @snake.paint 
+      @status.replace "Time: #{Time.now.strftime('%T')}" 
+    else
+      @status.replace "Fail!"
+    end
   }
   
   keypress do |k|
