@@ -32,13 +32,13 @@ class Snake
     # moving the snake to the center from its random spot
     center = [FIELD_SIZE / 2, FIELD_SIZE / 2]
         
-    if center[0] - head[0] == 0
-      @direction = center[1] > head[1] ? :down : :up
+    if center[0] - @cells.first[0] == 0
+      @direction = center[1] > @cells.first[1] ? :down : :up
     else
-      slope = (center[1] - head[1]) / (center[0] - head[0])
+      slope = (center[1] - @cells.first[1]) / (center[0] - @cells.first[0])
       
       if slope.zero?
-        @direction = center[0] > head[0] ? :right : :left
+        @direction = center[0] > @cells.first[0] ? :right : :left
       elsif slope > 0
         @direction = :left
       else
@@ -47,50 +47,44 @@ class Snake
     end
   end
   
-  def head
-    @cells[0]
-  end
-  
   def turn(key)
     @direction = key if DIRECTIONS.keys.include?(key)
   end
   
-  def paint(grow = false)
-    @cells.each do |seg|
-      @field.paint(seg[0], seg[1], Colors::SNAKE_RED)
-    end
-      
-    @field.paint(@tail[0], @tail[1]) if !grow
-  end
-  
   def move
     dir = DIRECTIONS[@direction]
-    cell = [head[0] + dir[0], head[1] + dir[1]]
+    cell = [@cells.first[0] + dir[0], @cells.first[1] + dir[1]]
     
     inside = Proc.new { |x| x.between?(0, FIELD_SIZE - 1) }
     @moving = inside.call(cell[0]) && inside.call(cell[1])
     
     if @moving
     
-      @tail = @cells.last.dup
-      @cells.push(cell)
-      
       if @food.cells.include?(cell)
         @size = @size + 1
         p "OM NOM NOM, size: #{@size}"
-        
         @food.cells.delete(cell)
         bake
-        #paint(true)
-       # @cells << cell
-      else
-        @cells.shift
       end 
-        paint 
+      p "MOVING TO #{cell.inspect}"
       
-      p @cells
+      @cells.insert(0, cell)
       
       
+      if @cells.size > @size
+        #delete the tail
+        tail = @cells.delete_at(@size)
+        @field.paint(tail[0], tail[1])
+      end
+            
+      @field.paint(@cells.first[0], @cells.first[1], Colors::SNAKE_RED) 
+      
+      p "MOVING!"
+      @cells.each do |c|
+        p "    " + c.inspect
+      end
+      
+      p "=========="
     end
   end
 end
