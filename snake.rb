@@ -13,6 +13,34 @@ end
 class Colors
   GROUND = "#46350A"
   SNAKE_RED = "#B02222"
+  FOOD = "#E6EF74"
+end
+
+class Food
+  attr_reader :foods
+
+  def initialize(snake)
+    @snake = snake
+  end
+  
+  def create
+    found = false
+    
+    while !found
+      food = Field.rand
+      found = !@snake.segments.include?(food)
+    end
+    
+    foods << food
+    
+    return food
+  end
+  
+  def paint
+  
+  end
+  
+
 end
 
 class Cell
@@ -34,7 +62,7 @@ class Cell
 end
 
 class Snake  
-  attr_reader :moving
+  attr_reader :moving, :segments
   
   DIRECTIONS = {
     :up => [0, -1],
@@ -139,6 +167,7 @@ Shoes.app :height => 500, :width => 500, :title => "Snakes" do
   
   @field = Field.new(self)
   @snake = Snake.new(@field)
+  @food = Food.new(@snake)
   
   new_game
   
@@ -152,16 +181,18 @@ Shoes.app :height => 500, :width => 500, :title => "Snakes" do
     end
   end
   
+  every(10) do
+    pu
+  end
+  
   keypress do |k|
-    @snake.turn(k)    
-    new_game if k == :control_n
+    @snake.turn(k)
+    new_game if k == " "
   end
 =begin 
   flow :margin => 4 do
     button("New Game") { new_game }
   end
 =end  
-  stack do @status = para :stroke => white end 
-
- end
+  stack do @status = para :stroke => white end end
 
