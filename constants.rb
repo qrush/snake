@@ -1,0 +1,11 @@
+SPEED = 10
+FIELD_SIZE = 25
+CELL_SIZE = 15
+START_X = 50
+START_Y = 50
+
+class Colors
+  GROUND = "#46350A"
+  SNAKE_RED = "#B02222"
+  FOOD = "#E6EF74"
+end
