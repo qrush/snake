@@ -1,11 +1,12 @@
 require 'field'
 
 class Food
-  attr_reader :foods
+  attr_reader :cells
 
-  def initialize(snake)
+  def initialize(field, snake)
+    @field = field
     @snake = snake
-    @foods = []
+    @cells = []
   end
   
   def create
@@ -16,8 +17,9 @@ class Food
      found = !@snake.segments.include?(food)
     end
     
-    foods << food
+    cells << food
     
+    @field.paint(food[0], food[1], Colors::FOOD)
   end
 
 end

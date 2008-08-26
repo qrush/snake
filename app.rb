@@ -3,7 +3,7 @@ require 'snake'
 require 'food'
 
 Shoes.app :height => 500, :width => 500, :title => "Snakes" do
-  background "#08ab2e".."#1c582a"
+  background Colors::BG_TOP..Colors::BG_BOTTOM
   
   def new_game
     @field.reset
@@ -13,8 +13,7 @@ Shoes.app :height => 500, :width => 500, :title => "Snakes" do
   
   @field = Field.new(self)
   @snake = Snake.new(@field)
-  @food = Food.new(@snake)
-  
+  @food = Food.new(@field, @snake)
   new_game
   
   animate(SPEED) do
@@ -31,9 +30,7 @@ Shoes.app :height => 500, :width => 500, :title => "Snakes" do
     @snake.turn(k)
     new_game if k == " "
   end
-=begin 
-  flow :margin => 4 do
-    button("New Game") { new_game }
-  end
-=end  
-  stack do @status = para :stroke => white end end
+  
+  stack do 
+    @status = para :stroke => white 
+  end end

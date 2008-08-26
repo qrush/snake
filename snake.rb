@@ -46,10 +46,10 @@ class Snake
   
   def paint
     @segments.each do |seg|
-      @field.cells[FIELD_SIZE * seg[0] + seg[1]].paint(Colors::SNAKE_RED)
+      @field.paint(seg[0], seg[1], Colors::SNAKE_RED)
     end
-    
-    @field.cells[FIELD_SIZE * @tail[0] + @tail[1]].paint
+      
+    @field.paint(@tail[0], @tail[1])
   end
   
   def move

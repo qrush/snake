@@ -2,8 +2,6 @@ require 'constants'
 require 'cell'
 
 class Field
-  attr_reader :cells
-  
   def initialize(app)
     @app = app
     @cells = []
@@ -13,6 +11,10 @@ class Field
         @cells << Cell.new(app, x, y)
       end
     end
+  end
+
+  def paint(row, col, color = Colors::GROUND)
+    @cells[FIELD_SIZE * row + col].paint(color)
   end
 
   def reset

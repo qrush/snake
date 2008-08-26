@@ -9,7 +9,7 @@ class Cell
     @y = START_Y + (CELL_SIZE * col)
   end
   
-  def paint(color = Colors::GROUND)
+  def paint(color)
     @color = color
     @app.fill color
     @app.strokewidth 0

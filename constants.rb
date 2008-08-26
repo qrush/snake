@@ -8,4 +8,6 @@ class Colors
   GROUND = "#46350A"
   SNAKE_RED = "#B02222"
   FOOD = "#E6EF74"
+  BG_TOP = "#08ab2e"
+  BG_BOTTOM = "#1c582a"
 end
