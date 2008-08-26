@@ -3,8 +3,7 @@ require 'field'
 class Food
   attr_reader :cells
 
-  def initialize(field, snake)
-    @field = field
+  def initialize(snake)
     @snake = snake
     @cells = []
   end
@@ -14,12 +13,12 @@ class Food
     
     while !found
      food = Field.rand
-     found = !@snake.segments.include?(food)
+     found = !@snake.cells.include?(food)
     end
     
     cells << food
     
-    @field.paint(food[0], food[1], Colors::FOOD)
+    return food
   end
 
 end

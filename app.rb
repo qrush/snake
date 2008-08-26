@@ -8,18 +8,15 @@ Shoes.app :height => 500, :width => 500, :title => "Snakes" do
   def new_game
     @field.reset
     @snake.reset
-    @food.create
   end
   
   @field = Field.new(self)
   @snake = Snake.new(@field)
-  @food = Food.new(@field, @snake)
   new_game
   
   animate(SPEED) do
     if @snake.moving
-      @snake.move 
-      @snake.paint 
+      @snake.move
       @status.replace "Time: #{Time.now.strftime('%T')}" 
     else
       @status.replace "Fail!"

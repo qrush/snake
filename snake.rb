@@ -1,7 +1,7 @@
 require 'constants'
 
 class Snake  
-  attr_reader :moving, :segments
+  attr_reader :moving, :cells
   
   DIRECTIONS = {
     :up => [0, -1],
@@ -12,15 +12,26 @@ class Snake
   
   def initialize(field)
     @field = field
+    @food = Food.new(self)
+  end
+  
+  def bake
+    # Make a new food and get it painted.
+    food = @food.create
+    @field.paint(food[0], food[1], Colors::FOOD)
   end
   
   def reset
+    # Resetting stuff...
     @moving = true   
-    @segments = [Field.rand]
+    @cells = [Field.rand]
+    @size = 1
+    p @cells
+    bake()
     
+    # moving the snake to the center from its random spot
     center = [FIELD_SIZE / 2, FIELD_SIZE / 2]
         
-    # moving the snake to the center from its random spot
     if center[0] - head[0] == 0
       @direction = center[1] > head[1] ? :down : :up
     else
@@ -37,31 +48,49 @@ class Snake
   end
   
   def head
-    @segments[0]
+    @cells[0]
   end
   
   def turn(key)
     @direction = key if DIRECTIONS.keys.include?(key)
   end
   
-  def paint
-    @segments.each do |seg|
+  def paint(grow = false)
+    @cells.each do |seg|
       @field.paint(seg[0], seg[1], Colors::SNAKE_RED)
     end
       
-    @field.paint(@tail[0], @tail[1])
+    @field.paint(@tail[0], @tail[1]) if !grow
   end
   
   def move
     dir = DIRECTIONS[@direction]
-    row, col = head[0] + dir[0], head[1] + dir[1]
+    cell = [head[0] + dir[0], head[1] + dir[1]]
     
     inside = Proc.new { |x| x.between?(0, FIELD_SIZE - 1) }
-    @moving = inside.call(row) && inside.call(col)
+    @moving = inside.call(cell[0]) && inside.call(cell[1])
     
     if @moving
-      @tail = @segments.last.dup
-      @segments[0] = [row, col]
+    
+      @tail = @cells.last.dup
+      @cells.push(cell)
+      
+      if @food.cells.include?(cell)
+        @size = @size + 1
+        p "OM NOM NOM, size: #{@size}"
+        
+        @food.cells.delete(cell)
+        bake
+        #paint(true)
+       # @cells << cell
+      else
+        @cells.shift
+      end 
+        paint 
+      
+      p @cells
+      
+      
     end
   end
 end
