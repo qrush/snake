@@ -3,7 +3,7 @@ require 'snake'
 require 'food'
 
 Shoes.app :height => 500, :width => 500, :title => "Snakes" do
-  background Colors::BG_TOP..Colors::BG_BOTTOM
+  background "#08ab2e".."#1c582a"
   
   def new_game
     @field.reset

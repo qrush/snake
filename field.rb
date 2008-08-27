@@ -4,22 +4,26 @@ require 'cell'
 class Field
   def initialize(app)
     @app = app
-    @cells = []
+    @map = {}
     
-    FIELD_SIZE.times do |x|
-      FIELD_SIZE.times do |y|
-        @cells << Cell.new(app, x, y)
+    FIELD_SIZE.times do |row|
+      FIELD_SIZE.times do |col|
+        @map[slugify(row, col)] = Cell.new(app, row, col)
       end
     end
   end
 
-  def paint(row, col, color = Colors::GROUND)
-    @cells[FIELD_SIZE * row + col].paint(color)
+  def paint(row, col, status = Status::GROUND)
+    @map[slugify(row, col)].paint(status)
+  end
+
+  def slugify(row, col)
+    sprintf("%s-%s", row, col)
   end
 
   def reset
     side = CELL_SIZE * FIELD_SIZE
-    @app.fill Colors::GROUND
+    @app.fill COLORS[Status::GROUND]
     @app.strokewidth 0
     @app.rect(START_X, START_Y, side, side)
   end

@@ -18,7 +18,7 @@ class Snake
   def bake
     # Make a new food and get it painted.
     food = @food.create
-    @field.paint(food[0], food[1], Colors::FOOD)
+    @field.paint(food[0], food[1], Status::FOOD)
   end
   
   def reset
@@ -26,11 +26,10 @@ class Snake
     @moving = true   
     @cells = [Field.rand]
     @size = 1
-    p @cells
     bake()
     
     # moving the snake to the center from its random spot
-    center = [FIELD_SIZE / 2, FIELD_SIZE / 2]
+    center = Array.new(2, FIELD_SIZE / 2)
         
     if center[0] - @cells.first[0] == 0
       @direction = center[1] > @cells.first[1] ? :down : :up
@@ -62,29 +61,19 @@ class Snake
     
       if @food.cells.include?(cell)
         @size = @size + 1
-        p "OM NOM NOM, size: #{@size}"
         @food.cells.delete(cell)
         bake
       end 
-      p "MOVING TO #{cell.inspect}"
       
       @cells.insert(0, cell)
       
-      
+      # delete the tail
       if @cells.size > @size
-        #delete the tail
         tail = @cells.delete_at(@size)
         @field.paint(tail[0], tail[1])
       end
             
-      @field.paint(@cells.first[0], @cells.first[1], Colors::SNAKE_RED) 
-      
-      p "MOVING!"
-      @cells.each do |c|
-        p "    " + c.inspect
-      end
-      
-      p "=========="
+      @field.paint(@cells.first[0], @cells.first[1], Status::SNAKE) 
     end
   end
 end

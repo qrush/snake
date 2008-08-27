@@ -1,16 +1,19 @@
 require 'constants'
 
 class Cell
-  attr_reader :color
-  
+
   def initialize(app, row, col)
     @app = app
     @x = START_X + (CELL_SIZE * row)
     @y = START_Y + (CELL_SIZE * col)
+    @status = Status::GROUND
   end
   
-  def paint(color)
-    @color = color
+  def paint(status)
+  
+    @status = status
+    color = COLORS[@status]
+    
     @app.fill color
     @app.strokewidth 0
     #@app.oval(@x, @y, 20, 20)
