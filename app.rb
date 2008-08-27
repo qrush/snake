@@ -1,6 +1,5 @@
 require 'field'
 require 'snake'
-require 'food'
 
 Shoes.app :height => 500, :width => 500, :title => "Snakes" do
   background "#08ab2e".."#1c582a"

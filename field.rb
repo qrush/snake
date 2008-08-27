@@ -13,10 +13,14 @@ class Field
     end
   end
 
-  def paint(row, col, status = Status::GROUND)
-    @map[slugify(row, col)].paint(status)
+  def paint(cell, status = Status::GROUND)
+    @map[slugify(cell[0], cell[1])].paint(status)
   end
-
+  
+  def status(cell)
+    @map[slugify(cell[0], cell[1])].status
+  end
+  
   def slugify(row, col)
     sprintf("%s-%s", row, col)
   end

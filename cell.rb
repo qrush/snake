@@ -1,6 +1,7 @@
 require 'constants'
 
 class Cell
+  attr_reader :status
 
   def initialize(app, row, col)
     @app = app

@@ -1,3 +1,4 @@
+=begin
 require 'field'
 
 class Food
@@ -22,4 +23,4 @@ class Food
   end
 
 end
-
+=end

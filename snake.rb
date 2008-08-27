@@ -12,13 +12,19 @@ class Snake
   
   def initialize(field)
     @field = field
-    @food = Food.new(self)
+   # @food = Food.new(self)
   end
   
   def bake
-    # Make a new food and get it painted.
-    food = @food.create
-    @field.paint(food[0], food[1], Status::FOOD)
+    found = false
+    
+    while !found
+      #  @size = @size + 1hile !found
+     food = Field.rand
+     found = @field.status(food) #!@snake.cells.include?(food)
+    end
+    
+    @field.paint(food, Status::FOOD)
   end
   
   def reset
@@ -26,7 +32,7 @@ class Snake
     @moving = true   
     @cells = [Field.rand]
     @size = 1
-    bake()
+    bake
     
     # moving the snake to the center from its random spot
     center = Array.new(2, FIELD_SIZE / 2)
@@ -57,24 +63,22 @@ class Snake
     inside = Proc.new { |x| x.between?(0, FIELD_SIZE - 1) }
     @moving = inside.call(cell[0]) && inside.call(cell[1])
     
-    if @moving
-    
-      if @food.cells.include?(cell)
-        @size = @size + 1
-        @food.cells.delete(cell)
-        bake
-      end 
-      
-      @cells.insert(0, cell)
-      
-      # delete the tail
-      if @cells.size > @size
-        tail = @cells.delete_at(@size)
-        @field.paint(tail[0], tail[1])
-      end
-            
-      @field.paint(@cells.first[0], @cells.first[1], Status::SNAKE) 
+    return if !@moving
+          
+    if @field.status(cell) == Status::FOOD
+      @size = @size + 1
+      bake
     end
+      
+    @cells.insert(0, cell)
+    
+    # delete the tail
+    if @cells.size > @size
+      tail = @cells.delete_at(@size)
+      @field.paint(tail)
+    end
+          
+    @field.paint(@cells.first, Status::SNAKE)
   end
 end
 
