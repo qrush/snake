@@ -14,12 +14,14 @@ programmer.
 
 ## I hate snakes! Why does it always have to be snakes!?
 
+First of all, download Shoes at:
+
+http://code.whytheluckystiff.net/shoes/wiki/RecentBuilds
+
 To get it running, point your shoes binary at app.rb. This is currently tested
 on Ubuntu, and I'll get around to testing it on XP and OSX soon.
 
-More help/information on this when I get time.
-
-## I'm sick of these ************* snakes on this ************* plane!
+## I'm sick of these \*\*\*\*\*\*\*\*\*\*\*\* snakes on this \*\*\*\*\*\*\*\*\*\*\*\* plane!
 
 My personal high score is 76. Then again, the game is REALLY slow by that point,
 but hopefully that will be fixed in the future. If you get higher, email me a
