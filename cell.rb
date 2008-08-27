@@ -10,13 +10,9 @@ class Cell
     @status = Status::GROUND
   end
   
-  def paint(status)
+  def paint(status, head)
     @status = status
-    color = COLORS[@status]
-    
-    @app.fill color
-    @app.strokewidth 0
-    #@app.oval(@x, @y, 20, 20)
+    @app.fill COLORS[@status]
     @app.rect :left => @x, :top => @y, :width => CELL_SIZE, :height => CELL_SIZE
   end
 end

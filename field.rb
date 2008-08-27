@@ -13,8 +13,8 @@ class Field
     end
   end
 
-  def paint(cell, status = Status::GROUND)
-    @map[slugify(cell[0], cell[1])].paint(status)
+  def paint(cell, status = Status::GROUND, head = false)
+    @map[slugify(cell[0], cell[1])].paint(status, head)
   end
   
   def status(cell)
@@ -27,6 +27,12 @@ class Field
 
   def reset
     side = CELL_SIZE * FIELD_SIZE
+    
+    @app.fill @app.black
+    margin = 2
+    side_with_margin = side + margin * 2
+    @app.rect(START_X - margin, START_Y - margin, side_with_margin, side_with_margin)
+    
     @app.fill COLORS[Status::GROUND]
     @app.strokewidth 0
     @app.rect(START_X, START_Y, side, side)
@@ -38,8 +44,12 @@ class Field
   
   class << self
     def rand
-      p = Proc.new { (Kernel.rand * 100 % FIELD_SIZE - 1).to_i }
-      [p.call, p.call]
+      [random_cell, random_cell]
     end
+    
+    private
+      def random_cell
+         (Kernel.rand * 100 % FIELD_SIZE - 1).to_i
+      end
   end
 end

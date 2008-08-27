@@ -98,7 +98,11 @@ class Snake
       @field.paint(tail)
     end
     
-    @field.paint(@cells.first, Status::SNAKE)
+    if @size > 1
+     # @field.paint(@cells[1], Status::SNAKE)
+    end
+    
+    @field.paint(@cells.first, Status::SNAKE, true)
   end
 end
 
