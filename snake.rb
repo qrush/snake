@@ -1,11 +1,19 @@
 require 'constants'
 
 class Snake  
-  attr_reader :moving, :cells
+  attr_reader :moving, :score, :high_score
   
   def initialize(field)
     @field = field
     @keycheck = false
+    @score = @high_score = 0
+  end
+
+  def eat
+    @size = @size + 1
+    @score = @score + 1
+    @high_score = @score if @score > @high_score
+    bake
   end
   
   def bake
@@ -24,6 +32,7 @@ class Snake
     @moving = true   
     @cells = [Field.rand]
     @size = 1
+    @score = 0
     bake
     
     # moving the snake to the center from its random spot
@@ -75,8 +84,7 @@ class Snake
     
     case status
     when Status::FOOD
-      @size = @size + 1
-      bake
+      eat
     when Status::SNAKE
       @moving = false
       return
