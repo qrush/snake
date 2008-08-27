@@ -30,6 +30,10 @@ class Field
     @app.fill COLORS[Status::GROUND]
     @app.strokewidth 0
     @app.rect(START_X, START_Y, side, side)
+    
+    @map.each do |key, cell|
+      cell.status = Status::GROUND
+    end
   end
   
   class << self

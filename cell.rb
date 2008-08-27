@@ -1,7 +1,7 @@
 require 'constants'
 
 class Cell
-  attr_reader :status
+  attr_accessor :status
 
   def initialize(app, row, col)
     @app = app
@@ -11,7 +11,6 @@ class Cell
   end
   
   def paint(status)
-  
     @status = status
     color = COLORS[@status]
     
