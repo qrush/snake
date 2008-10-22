@@ -2,13 +2,13 @@ require 'constants'
 require 'cell'
 
 class Field
-  def initialize(app)
-    @app = app
+  def initialize(img)
+    @img = img
     @map = {}
     
     FIELD_SIZE.times do |row|
       FIELD_SIZE.times do |col|
-        @map[slugify(row, col)] = Cell.new(app, row, col)
+        @map[slugify(row, col)] = Cell.new(img, row, col)
       end
     end
   end
@@ -28,14 +28,14 @@ class Field
   def reset
     side = CELL_SIZE * FIELD_SIZE
     
-    @app.fill @app.black
+    @img.fill '#000'
     margin = 2
     side_with_margin = side + margin * 2
-    @app.rect(START_X - margin, START_Y - margin, side_with_margin, side_with_margin)
+    @img.rect(START_X - margin, START_Y - margin, side_with_margin, side_with_margin)
     
-    @app.fill COLORS[Status::GROUND]
-    @app.strokewidth 0
-    @app.rect(START_X, START_Y, side, side)
+    @img.fill COLORS[Status::GROUND]
+    @img.strokewidth 0
+    @img.rect(START_X, START_Y, side, side)
     
     @map.each do |key, cell|
       cell.status = Status::GROUND

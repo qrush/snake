@@ -1,7 +1,7 @@
 require 'field'
 require 'snake'
 
-Shoes.app :height => WINDOW_SIZE, :width => WINDOW_SIZE, :title => "Snake" do
+Shoes.app :height => WINDOW_SIZE + 40, :width => WINDOW_SIZE, :title => "Snake" do
   background "#08ab2e".."#1c582a"
   
   def new_game
@@ -9,7 +9,13 @@ Shoes.app :height => WINDOW_SIZE, :width => WINDOW_SIZE, :title => "Snake" do
     @snake.reset
   end
   
-  @field = Field.new(self)
+  style = {:stroke => white, :font => "Monospace", :align => "center"}
+  stack do 
+    @status = para style.merge(:size => 10, :margin_top => 20, :margin_bottom => 0) 
+      
+    @status.replace  "Welcome to Snake!"
+  end
+  @field = Field.new(image(354,354))
   @snake = Snake.new(@field)
   new_game
   
@@ -27,13 +33,8 @@ Shoes.app :height => WINDOW_SIZE, :width => WINDOW_SIZE, :title => "Snake" do
     new_game if k == " "
   end
   
-  style = {:stroke => white, :font => "Monospace", :align => "center"}
-  
-  stack do 
-    @status = para style.merge(:size => 9, :margin_top => 3) 
-  end
-  
-  stack :margin_top => FIELD_SIZE * CELL_SIZE - 3 do
+  stack  do
     para "Controls: Up, Down, Left, Right to move. Space to start new game.", 
       style.merge(:size => 7)
-  end end
+  end 
+end
