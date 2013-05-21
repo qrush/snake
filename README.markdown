@@ -1,6 +1,6 @@
 # Snake
 
-![Snake Screenshot](http://github.com/qrush/snake/tree/master%2Fscreenshot.png?raw=true)
+![Snake Screenshot](https://raw.github.com/qrush/snake/master/screenshot.png)
 
 
 ## There's a snake in my shoes!
